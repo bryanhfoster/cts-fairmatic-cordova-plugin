@@ -214,6 +214,11 @@ Zendrive.goOffDuty = function(successCallback, errorCallback) {
     exec(successCallback, errorCallback, "Zendrive", "goOffDuty", []);
 	return true;
 };
+
+Zendrive.requestPermissions = function(successCallback, errorCallback) {
+    exec(successCallback, errorCallback, "Zendrive", "requestPermissions", []);
+	return true;
+};
 /*************************************************************************************************/
 
 /**

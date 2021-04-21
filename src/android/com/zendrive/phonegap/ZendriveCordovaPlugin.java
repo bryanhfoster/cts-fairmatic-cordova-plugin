@@ -1,5 +1,6 @@
 package com.zendrive.phonegap;
 
+import android.Manifest;
 import android.Manifest.permission;
 import android.content.pm.PackageManager;
 import android.util.Log;
@@ -14,6 +15,7 @@ import com.zendrive.sdk.ZendriveOperationResult;
 import org.apache.cordova.CallbackContext;
 import org.apache.cordova.CordovaInterface;
 import org.apache.cordova.CordovaPlugin;
+import org.apache.cordova.PermissionHelper;
 import org.apache.cordova.PluginResult;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -23,6 +25,7 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.Date;
 import java.util.Iterator;
+import java.util.Random;
 
 /**
  * Created by chandan on 11/3/14.
@@ -42,6 +45,11 @@ public class ZendriveCordovaPlugin extends CordovaPlugin {
     private static final String PERMISSION_DENIED_ERROR = "Location permission denied by user";
     private static final int LOCATION_PERMISSION_REQUEST = 42;
 
+    private String [] permissions = { permission.ACCESS_FINE_LOCATION, permission.ACCESS_NETWORK_STATE, permission.ACCESS_WIFI_STATE,
+            permission.INTERNET, permission.ACCESS_BACKGROUND_LOCATION, permission.ACCESS_COARSE_LOCATION, permission.WAKE_LOCK,
+            permission.WAKE_LOCK, permission.ACTIVITY_RECOGNITION, permission.SYSTEM_ALERT_WINDOW, permission.RECEIVE_BOOT_COMPLETED,
+            permission.RECEIVE_BOOT_COMPLETED, permission.USE_FULL_SCREEN_INTENT };
+
     private CallbackContext callbackContext;
 
     public android.content.Context OverrideContext = null;
@@ -54,6 +62,9 @@ public class ZendriveCordovaPlugin extends CordovaPlugin {
     private android.content.Context getContext() {
         return OverrideContext == null ? this.cordova.getContext() : OverrideContext;
     }
+
+
+
 
     @Override
     protected synchronized void pluginInitialize() {
@@ -112,6 +123,8 @@ public class ZendriveCordovaPlugin extends CordovaPlugin {
                     goOnDuty(callbackContext);
                 } else if (action.equals("goOffDuty")) {
                     goOffDuty(callbackContext);
+                } else if(action.equals("requestPermissions")) {
+                    this.requestPermissions(generateRandom());
                 }
                 callbackContext.success(); // Thread-safe.
             } catch (JSONException e) {
@@ -120,6 +133,17 @@ public class ZendriveCordovaPlugin extends CordovaPlugin {
         });
 
         return true;
+    }
+    protected int generateRandom(){
+        Random rn = new Random();
+        return rn.nextInt(1000000) + 1;
+    }
+
+    @Override
+    public void requestPermissions(int requestCode)
+    {
+        PermissionHelper.requestPermissions(this, requestCode, permissions);
+        this.callbackContext.success();
     }
 
     @Override
@@ -193,7 +217,9 @@ public class ZendriveCordovaPlugin extends CordovaPlugin {
 
     private void requestPermissions() {
         if (cordova != null) {
-            cordova.requestPermission(this, LOCATION_PERMISSION_REQUEST, permission.ACCESS_FINE_LOCATION);
+            for (int i=0; i< permissions.length; i++) {
+                cordova.requestPermission(this, LOCATION_PERMISSION_REQUEST, permissions[i]);
+            }
         }
     }
 
