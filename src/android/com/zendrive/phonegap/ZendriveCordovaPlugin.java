@@ -348,9 +348,11 @@ public class ZendriveCordovaPlugin extends CordovaPlugin {
     }
 
     private ZendriveDriveDetectionMode getDriveDetectionModeFromInt(Integer driveDetectionModeInt) {
-        ZendriveDriveDetectionMode mode = driveDetectionModeInt == 1 ? ZendriveDriveDetectionMode.AUTO_OFF
-                : ZendriveDriveDetectionMode.AUTO_ON;
-        return mode;
+        switch (driveDetectionModeInt) {
+            case 0: return ZendriveDriveDetectionMode.AUTO_ON;
+            case 1: return ZendriveDriveDetectionMode.AUTO_OFF;
+            default: return ZendriveDriveDetectionMode.INSURANCE;
+        }
     }
 
     private ZendriveDriverAttributes getDriverAttrsFromJsonObject(JSONObject configJsonObj) throws JSONException {
