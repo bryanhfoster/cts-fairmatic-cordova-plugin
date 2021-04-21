@@ -1,0 +1,33 @@
+{
+  "name": "cts-fairmatic-cordova-plugin",
+  "version": "0.1.0",
+  "description": "Phonegap plugin for the Zendrive SDK.",
+  "cordova": {
+    "id": "com-cts-fairmatic-cordova-plugin",
+    "platforms": [
+      "android",
+      "ios"
+    ]
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/justincts1975/com-cts-fairmatic-cordova-plugin.git"
+  },
+  "keywords": [
+    "ecosystem:cordova",
+    "cordova-android",
+    "cordova-ios"
+  ],
+  "engines": [
+    {
+      "name": "cordova",
+      "version": ">=3.4.0"
+    }
+  ],
+  "author": "Pullup",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/justincts1975/com-cts-fairmatic-cordova-plugin/issues"
+  },
+  "homepage": "https://github.com/justincts1975/com-cts-fairmatic-cordova-plugin#readme"
+}

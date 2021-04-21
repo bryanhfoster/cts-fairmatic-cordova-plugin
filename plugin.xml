@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<plugin xmlns="http://apache.org/cordova/ns/plugins/1.0"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    id="com-cts-fairmatic-cordova-plugin"
+    version="0.1.0">
+
+    <name>Zendrive</name>
+    <description>Phonegap plugin for the Zendrive SDK.</description>
+
+    <engines>
+        <engine name="cordova" version=">=3.4.0"/>
+    </engines>
+
+    <js-module name="ZendriveCordovaPlugin" src="www/zendrive.js">
+        <clobbers target="Zendrive" />
+    </js-module>
+    <platform name="android">
+        <config-file target="res/xml/config.xml" parent="/*">
+            <feature name="Zendrive">
+                <param name="android-package" value="com.zendrive.phonegap.ZendriveCordovaPlugin" />
+                <param name="onload" value="true" />
+            </feature>
+        </config-file>
+
+        <config-file target="AndroidManifest.xml" parent="/manifest">
+            <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+            <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+            <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+            <uses-permission android:name="android.permission.INTERNET" />
+            <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION" />
+            <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+            <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+
+            <!-- This permission is needed for automatic drive detection by Zendrive. -->
+            <uses-permission android:name= "com.google.android.gms.permission.ACTIVITY_RECOGNITION" />
+
+            <!-- This permission is needed so that Zendrive can track drives completely. This prevents Android from shutting down phone CPU in the middle of a drive. -->
+            <uses-permission android:name="android.permission.WAKE_LOCK" />
+        </config-file>
+
+        <config-file target="AndroidManifest.xml" parent="/manifest/application">
+            <receiver android:name="com.zendrive.phonegap.ZendriveCordovaBroadcastReceiver" android:label="ZendriveCordovaBroadcastReceiver"></receiver>
+        </config-file>
+
+        <source-file src="src/android/com/zendrive/phonegap/ZendriveCordovaPlugin.java" target-dir="src/com/zendrive/phonegap" />
+        <source-file src="src/android/com/zendrive/phonegap/ZendriveCordovaBroadcastReceiver.java" target-dir="src/com/zendrive/phonegap" />
+        <source-file src="src/android/com/zendrive/phonegap/ZendriveNotificationProviderImpl.java" target-dir="src/com/zendrive/phonegap" />
+        <source-file src="src/android/com/zendrive/phonegap/NotificationActivity.java" target-dir="src/com/zendrive/phonegap" />
+        <source-file src="src/android/com/zendrive/phonegap/NotificationUtility.java" target-dir="src/com/zendrive/phonegap" />
+        <source-file src="src/android/com/zendrive/phonegap/ZendriveManager.java" target-dir="src/com/zendrive/phonegap" />
+        <source-file src="src/android/com/zendrive/phonegap/TripManager.java" target-dir="src/com/zendrive/phonegap" />
+        <source-file src="src/android/com/zendrive/phonegap/SharedPrefsManager.java" target-dir="src/com/zendrive/phonegap" />
+
+        <resource-file src="src/android/res/plugin-strings.xml" target="res/values/plugin-strings.xml" />
+        <resource-file src="src/android/res/drawable-hdpi" target="res/drawable-hdpi" />
+        <resource-file src="src/android/res/drawable-mdpi" target="res/drawable-mdpi" />
+        <resource-file src="src/android/res/drawable-xhdpi" target="res/drawable-xhdpi" />
+        <resource-file src="src/android/res/drawable-xxhdpi" target="res/drawable-xxhdpi" />
+
+        <!-- External Libraries -->
+        <framework src="com.google.android.gms:play-services-location:8.4.0" />
+        <framework src="src/android/build-extras.gradle" custom="true" type="gradleReference" />
+    </platform>
+    <platform name="ios">
+        <config-file target="config.xml" parent="/*">
+            <feature name="Zendrive">
+                <param name="ios-package" value="ZendriveCordovaPlugin" />
+            </feature>
+        </config-file>
+        <config-file target="*-Info.plist" parent="UIBackgroundModes">
+            <array>
+                <string>location</string>
+            </array>
+        </config-file>
+        <config-file target="*-Info.plist" parent="NSLocationAlwaysUsageDescription">
+            <string>This app requires background location tracking</string>
+        </config-file>
+        <config-file target="*-Info.plist" parent="NSLocationWhenInUseUsageDescription">
+            <string>This app requires background location tracking</string>
+        </config-file>
+        <config-file target="*-Info.plist" parent="NSLocationAlwaysAndWhenInUseUsageDescription">
+            <string>This app requires background location tracking</string>
+        </config-file>
+        <config-file target="*-Info.plist" parent="NSAppTransportSecurity">
+            <dict>
+                <key>NSExceptionDomains</key>
+                <dict>
+                    <key>amazonaws.com</key>
+                    <dict>
+                        <key>NSThirdPartyExceptionMinimumTLSVersion</key>
+                        <string>TLSv1.0</string>
+                        <key>NSThirdPartyExceptionRequiresForwardSecrecy</key>
+                        <false/>
+                        <key>NSIncludesSubdomains</key>
+                        <true/>
+                    </dict>
+                    <key>amazonaws.com.cn</key>
+                    <dict>
+                        <key>NSThirdPartyExceptionMinimumTLSVersion</key>
+                        <string>TLSv1.0</string>
+                        <key>NSThirdPartyExceptionRequiresForwardSecrecy</key>
+                        <false/>
+                        <key>NSIncludesSubdomains</key>
+                        <true/>
+                    </dict>
+                </dict>
+            </dict>
+        </config-file>
+
+        <header-file src="src/ios/ZendriveCordovaPlugin.h" />
+        <source-file src="src/ios/ZendriveCordovaPlugin.m" />
+        <source-file src="src/ios/VOID.swift" />
+
+        <!-- External Frameworks -->
+        <framework src="ZendriveSDK" type="podspec" spec=":git => 'https://bitbucket.org/zendrive-root/zendrive_cocoapod.git', :tag => '7.1.0'"/>
+        <dependency id="cordova-plugin-add-swift-support" version="2.0.2"/>
+    </platform>
+</plugin>

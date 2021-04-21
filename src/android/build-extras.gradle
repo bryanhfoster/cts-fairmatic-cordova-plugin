@@ -1,0 +1,22 @@
+android {
+    lintOptions {
+        // This is needed to avoid spurious lint errors from libthrift and log4j.
+        disable 'InvalidPackage'
+    }
+    packagingOptions {
+        exclude 'META-INF/LICENSE.txt'
+        exclude 'META-INF/NOTICE.txt'
+    }
+}
+
+repositories {
+        mavenCentral()
+        maven {
+            url "https://maven.google.com"
+        }
+        jcenter()
+}
+
+dependencies {
+    compile 'com.zendrive.sdk.android:ZendriveSDK:7.1.0'
+}
