@@ -51,6 +51,7 @@ public class ZendriveManager {
     private static final String WAYPOINTS_KEY = "waypoints";
     private static final String TRACKING_ID_KEY = "trackingId";
     private static final String SESSION_ID_KEY = "sessionId";
+    private static final String INSURANCE_PERIOD_KEY = "insurancePeriod";
 
     private static final String EVENT_LOCATION_PERMISSION_CHANGE = "location_permission_change";
     private static final String EVENT_LOCATION_SETTING_CHANGE = "location_setting_change";
@@ -166,12 +167,14 @@ public class ZendriveManager {
                     (activeDriveInfo.trackingId != null) ? activeDriveInfo.trackingId : JSONObject.NULL);
             activeDriveInfoObject.put(SESSION_ID_KEY,
                     (activeDriveInfo.sessionId != null) ? activeDriveInfo.sessionId : JSONObject.NULL);
+            activeDriveInfoObject.put(INSURANCE_PERIOD_KEY,
+                    (activeDriveInfo.insurancePeriod != null) ? GetPeriodInt(activeDriveInfo.insurancePeriod) : JSONObject.NULL);
             return activeDriveInfoObject;
         } catch (Exception e) {
         }
         return null;
     }
-
+	
     public void onDriveEnd(DriveInfo driveInfo) {
         if (processEndOfDriveCallback == null || processEndOfDriveCallback.isFinished()) {
             return;
@@ -269,6 +272,14 @@ public class ZendriveManager {
 
     }
 
+    public int GetPeriodInt(ZendriveInsurancePeriod period) {
+        switch (period) {
+            case Period1: return 1;
+            case Period2: return 2;
+            case Period3: return 3;
+            default: return 0;
+        }
+    }
 
     void updateZendriveInsurancePeriod(Context context) {
         ZendriveOperationCallback insuranceCalllback = new ZendriveOperationCallback() {
