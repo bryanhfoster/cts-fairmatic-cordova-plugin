@@ -43,6 +43,8 @@ public class ZendriveCordovaPlugin extends CordovaPlugin {
     private static final String PERMISSION_DENIED_ERROR = "Location permission denied by user";
     private static final int LOCATION_PERMISSION_REQUEST = 42;
 
+    private boolean isPluginInitialized = false;
+
     private String [] permissions = { permission.ACCESS_FINE_LOCATION, permission.ACCESS_NETWORK_STATE, permission.ACCESS_WIFI_STATE,
             permission.INTERNET, permission.ACCESS_BACKGROUND_LOCATION, permission.ACCESS_COARSE_LOCATION, permission.WAKE_LOCK,
             permission.WAKE_LOCK, permission.ACTIVITY_RECOGNITION, permission.SYSTEM_ALERT_WINDOW, permission.RECEIVE_BOOT_COMPLETED,
@@ -51,12 +53,15 @@ public class ZendriveCordovaPlugin extends CordovaPlugin {
     private CallbackContext callbackContext;
 
     public android.content.Context OverrideContext = null;
+
     private android.content.Context getAppContextThroughApp() {
         return OverrideContext == null ? this.cordova.getActivity().getApplication().getApplicationContext() : OverrideContext;
     }
+
     private android.content.Context getAppContext() {
         return OverrideContext == null ? this.cordova.getActivity().getApplicationContext() : OverrideContext;
     }
+
     private android.content.Context getContext() {
         return OverrideContext == null ? this.cordova.getContext() : OverrideContext;
     }
@@ -67,22 +72,18 @@ public class ZendriveCordovaPlugin extends CordovaPlugin {
         if (CORDOVA_INSTANCE == null) {
             CORDOVA_INSTANCE = cordova;
         }
-        ZendriveManager.init(getContext());
+        //TODO: this checks the version of the app to be over lollipop
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            verifyPluginInitialized();
+        }
     }
 
     @Override
     public void onStart() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            requestPermissions();
-        }
     }
 
     static CordovaInterface getCordovaInstance() {
         return CORDOVA_INSTANCE;
-    }
-
-    public void manuallyInitCordovaPlugin() {
-        this.pluginInitialize();
     }
 
     @Override
@@ -143,18 +144,34 @@ public class ZendriveCordovaPlugin extends CordovaPlugin {
     @Override
     public void requestPermissions(int requestCode)
     {
-        PermissionHelper.requestPermissions(this, requestCode, permissions);
-        this.callbackContext.success();
+        verifyPluginInitialized();
     }
 
     @Override
     public void onRequestPermissionResult(int requestCode, String[] permissions,
                                           int[] grantResults) throws JSONException {
-        for (int grant : grantResults) {
-            if (grant == PackageManager.PERMISSION_DENIED) {
-                this.callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.ERROR, PERMISSION_DENIED_ERROR));
+        for(int r:grantResults)
+        {
+            if(r == PackageManager.PERMISSION_DENIED)
+            {
+                if (this.callbackContext != null)
+                    this.callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.ERROR, PERMISSION_DENIED_ERROR));
                 return;
             }
+        }
+    }
+
+    public void verifyPluginInitialized() {
+        if (!isPluginInitialized) {
+            ZendriveManager.init(getContext());
+
+            for (int i = 0; i < permissions.length; i++) {
+                if (!cordova.hasPermission(permissions[i])) {
+                    cordova.requestPermission(this, 0, permissions[i]);
+                }
+            }
+
+            isPluginInitialized = true;
         }
     }
 
@@ -218,9 +235,7 @@ public class ZendriveCordovaPlugin extends CordovaPlugin {
 
     private void requestPermissions() {
         if (cordova != null) {
-            for (int i=0; i< permissions.length; i++) {
-                cordova.requestPermission(this, LOCATION_PERMISSION_REQUEST, permissions[i]);
-            }
+            cordova.requestPermissions(this, LOCATION_PERMISSION_REQUEST, permissions);
         }
     }
 
