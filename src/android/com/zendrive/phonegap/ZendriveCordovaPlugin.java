@@ -74,7 +74,7 @@ public class ZendriveCordovaPlugin extends CordovaPlugin {
         ZendriveManager.init(getContext());
 
         // this used to be "requestPermission"
-        if (cordova != null) {
+        if (cordova != null && Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             cordova.requestPermission(this, LOCATION_PERMISSION_REQUEST, permission.ACCESS_FINE_LOCATION);
         }
         //if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
