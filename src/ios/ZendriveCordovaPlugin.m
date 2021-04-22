@@ -82,7 +82,7 @@ static NSString * const kDriverAttributesKey = @"driverAttributes";
 - (void)pickupPassenger:(CDVInvokedUrlCommand*)command{
     [self.commandDelegate runInBackground:^{
         @synchronized(self) {
-			if (trackingId is nil) {
+			if (trackingId == nil) {
 				int randomNumber = abs(rand() * 10000);
 				trackingId = [NSString stringWithFormat:@"%i", randomNumber];
 			}
