@@ -91,6 +91,8 @@ public class ZendriveCordovaPlugin extends CordovaPlugin {
             throws JSONException {
         this.callbackContext = callbackContext;
         cordova.getThreadPool().execute(() -> {
+			verifyPluginInitialized();
+			
             try {
                 if (action.equals("setup")) {
                     setup(args);
