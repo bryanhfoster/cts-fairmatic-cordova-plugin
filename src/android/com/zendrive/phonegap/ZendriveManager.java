@@ -18,6 +18,7 @@ import com.zendrive.sdk.DriveResumeInfo;
 import com.zendrive.sdk.DriveStartInfo;
 import com.zendrive.sdk.LocationPointWithTimestamp;
 import com.zendrive.sdk.Zendrive;
+import com.zendrive.sdk.ZendriveInsurancePeriod;
 import com.zendrive.sdk.ZendriveOperationCallback;
 import com.zendrive.sdk.ZendriveOperationResult;
 import com.zendrive.sdk.insurance.ZendriveInsurance;
