@@ -43,12 +43,10 @@ public class ZendriveCordovaPlugin extends CordovaPlugin {
     private static final String PERMISSION_DENIED_ERROR = "Location permission denied by user";
     private static final int LOCATION_PERMISSION_REQUEST = 42;
 
-    private boolean isPluginInitialized = false;
-
-    private String [] permissions = { permission.ACCESS_FINE_LOCATION, permission.ACCESS_NETWORK_STATE, permission.ACCESS_WIFI_STATE,
-            permission.INTERNET, permission.ACCESS_BACKGROUND_LOCATION, permission.ACCESS_COARSE_LOCATION, permission.WAKE_LOCK,
-            permission.WAKE_LOCK, permission.ACTIVITY_RECOGNITION, permission.SYSTEM_ALERT_WINDOW, permission.RECEIVE_BOOT_COMPLETED,
-            permission.RECEIVE_BOOT_COMPLETED, permission.USE_FULL_SCREEN_INTENT };
+    private static final String [] permissions = { permission.ACCESS_FINE_LOCATION, permission.ACCESS_NETWORK_STATE, permission.ACCESS_WIFI_STATE,
+            permission.INTERNET, permission.ACCESS_COARSE_LOCATION, permission.WAKE_LOCK,
+            permission.WAKE_LOCK, permission.SYSTEM_ALERT_WINDOW, permission.RECEIVE_BOOT_COMPLETED,
+            permission.RECEIVE_BOOT_COMPLETED };
 
     private CallbackContext callbackContext;
 
@@ -73,14 +71,20 @@ public class ZendriveCordovaPlugin extends CordovaPlugin {
             CORDOVA_INSTANCE = cordova;
         }
         //TODO: this checks the version of the app to be over lollipop
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            verifyPluginInitialized();
+        ZendriveManager.init(getContext());
+
+        // this used to be "requestPermission"
+        if (cordova != null) {
+            cordova.requestPermission(this, LOCATION_PERMISSION_REQUEST, permission.ACCESS_FINE_LOCATION);
         }
+        //if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+        //   requestPermissions();
+        //}
     }
 
-    @Override
-    public void onStart() {
-    }
+    //@Override
+    //public void onStart() {
+    //}
 
     static CordovaInterface getCordovaInstance() {
         return CORDOVA_INSTANCE;
@@ -91,8 +95,7 @@ public class ZendriveCordovaPlugin extends CordovaPlugin {
             throws JSONException {
         this.callbackContext = callbackContext;
         cordova.getThreadPool().execute(() -> {
-			verifyPluginInitialized();
-			
+
             try {
                 if (action.equals("setup")) {
                     setup(args);
@@ -128,7 +131,7 @@ public class ZendriveCordovaPlugin extends CordovaPlugin {
                 } else if (action.equals("goOffDuty")) {
                     goOffDuty(callbackContext);
                 } else if(action.equals("requestPermissions")) {
-                    this.requestPermissions(generateRandom());
+                    this.requestAppPermissions();
                 }
                 callbackContext.success(); // Thread-safe.
             } catch (JSONException e) {
@@ -138,15 +141,12 @@ public class ZendriveCordovaPlugin extends CordovaPlugin {
 
         return true;
     }
-    protected int generateRandom(){
-        Random rn = new Random();
-        return rn.nextInt(1000000) + 1;
-    }
 
-    @Override
-    public void requestPermissions(int requestCode)
+    private void requestAppPermissions()
     {
-        verifyPluginInitialized();
+        if (cordova != null) {
+            PermissionHelper.requestPermissions(this, 0, permissions);
+        }
     }
 
     @Override
@@ -163,18 +163,14 @@ public class ZendriveCordovaPlugin extends CordovaPlugin {
         }
     }
 
-    public void verifyPluginInitialized() {
-        if (!isPluginInitialized) {
-            ZendriveManager.init(getContext());
+    public void manuallyInitializePlugin() {
+        pluginInitialize();
 
-            for (int i = 0; i < permissions.length; i++) {
-                if (!cordova.hasPermission(permissions[i])) {
-                    cordova.requestPermission(this, 0, permissions[i]);
-                }
-            }
-
-            isPluginInitialized = true;
-        }
+        //for (int i = 0; i < permissions.length; i++) {
+        //	if (cordova != null && !cordova.hasPermission(permissions[i])) {
+        //		cordova.requestPermission(this, 0, permissions[i]);
+        //	}
+        //}
     }
 
     private void setup(JSONArray args) throws JSONException {
