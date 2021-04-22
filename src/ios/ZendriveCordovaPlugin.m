@@ -7,6 +7,9 @@
 #import <ZendriveSDK/ZendriveActiveDriveInfo.h>
 #import <ZendriveSDK/ZendriveInsurance.h>
 
+#pragma mark - Default tracking id
+static NSString * trackingId = @"0ICU812";
+
 #pragma mark - Common dictionary keys
 static NSString * const kTrackingIdKey = @"trackingId";
 static NSString * const kSessionIdKey = @"sessionId";
@@ -79,7 +82,10 @@ static NSString * const kDriverAttributesKey = @"driverAttributes";
 - (void)pickupPassenger:(CDVInvokedUrlCommand*)command{
     [self.commandDelegate runInBackground:^{
         @synchronized(self) {
-            NSString *trackingId = [command argumentAtIndex:0];			
+			if (trackingId is nil) {
+				int randomNumber = abs(rand() * 10000);
+				trackingId = [NSString stringWithFormat:@"%i", randomNumber];
+			}
             [ZendriveInsurance startDriveWithPeriod3:trackingId
 				completionHandler:^(BOOL success, NSError * _Nullable error) {
 				if (success) {
@@ -99,7 +105,8 @@ static NSString * const kDriverAttributesKey = @"driverAttributes";
 - (void)dropoffPassenger:(CDVInvokedUrlCommand*)command{
     [self.commandDelegate runInBackground:^{
         @synchronized(self) {
-            [ZendriveInsurance stopPeriod:^(BOOL success, NSError * _Nullable error) {
+			trackingId = nil;
+            [ZendriveInsurance startDriveWithPeriod1:^(BOOL success, NSError * _Nullable error) {
 				if (success) {
 					NSLog(@"Insurance period 1 successfully called. Manual tracking starting.");
 				}
@@ -117,7 +124,8 @@ static NSString * const kDriverAttributesKey = @"driverAttributes";
 - (void)acceptPassengerRequest:(CDVInvokedUrlCommand*)command{
     [self.commandDelegate runInBackground:^{
         @synchronized(self) {
-            NSString *trackingId = [command argumentAtIndex:0];
+			int randomNumber = abs(rand() * 10000);
+			trackingId = [NSString stringWithFormat:@"%i", randomNumber];
             [ZendriveInsurance startDriveWithPeriod2:trackingId 
 				completionHandler:^(BOOL success, NSError * _Nullable error) {
 				if (success) {
@@ -136,6 +144,7 @@ static NSString * const kDriverAttributesKey = @"driverAttributes";
 - (void)cancelPassengerRequest:(CDVInvokedUrlCommand*)command{
     [self.commandDelegate runInBackground:^{
         @synchronized(self) {
+			trackingId = nil;
             [ZendriveInsurance startDriveWithPeriod1:^(BOOL success, NSError * _Nullable error) {
             if (success) {
                 NSLog(@"Insurance period 1 successfully called. Manual tracking starting.");
@@ -153,6 +162,7 @@ static NSString * const kDriverAttributesKey = @"driverAttributes";
 - (void)goOnDuty:(CDVInvokedUrlCommand*)command{
     [self.commandDelegate runInBackground:^{
         @synchronized(self) {
+			trackingId = nil;
            [ZendriveInsurance startDriveWithPeriod1:^(BOOL success, NSError * _Nullable error) {
             if (success) {
                 NSLog(@"Insurance period 1 successfully called. Manual tracking starting.");
@@ -170,6 +180,7 @@ static NSString * const kDriverAttributesKey = @"driverAttributes";
 - (void)goOffDuty:(CDVInvokedUrlCommand*)command{
     [self.commandDelegate runInBackground:^{
         @synchronized(self) {
+			trackingId = nil;
             [ZendriveInsurance stopPeriod:^(BOOL success, NSError * _Nullable error) {
             if (success) {
                 NSLog(@"Insurance period 1 successfully called. Manual tracking starting.");
