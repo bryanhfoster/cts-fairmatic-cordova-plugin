@@ -240,7 +240,9 @@ Zendrive.ZendriveDriveDetectionMode = {
      *  invoke the @{@link Zendrive.startDrive} method.
      * @type {Number}
      */
-    ZendriveDriveDetectionModeAutoOFF: 1
+    ZendriveDriveDetectionModeAutoOFF: 1,
+	
+    ZendriveDriveDetectionModeInsurance: 2
 };
 
 /**
@@ -342,7 +344,7 @@ Zendrive.ZendriveConfiguration = function (applicationKey, driverId) {
      * This mode can be changed at a later point using @{@link Zendrive.setDriveDetectionMode} method.
      * @type {Zendrive.ZendriveDriveDetectionMode}
      */
-    this.driveDetectionMode = Zendrive.ZendriveDriveDetectionMode.ZendriveDriveDetectionModeAutoON;
+    this.driveDetectionMode = Zendrive.ZendriveDriveDetectionMode.ZendriveDriveDetectionModeInsurance;
 };
 
 /**
