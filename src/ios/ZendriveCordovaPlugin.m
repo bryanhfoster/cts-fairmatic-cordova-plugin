@@ -7,6 +7,8 @@
 #import <ZendriveSDK/ZendriveActiveDriveInfo.h>
 #import <ZendriveSDK/ZendriveInsurance.h>
 
+static NSString * trackingId = @"0ICU812";
+
 #pragma mark - Common dictionary keys
 static NSString * const kTrackingIdKey = @"trackingId";
 static NSString * const kSessionIdKey = @"sessionId";
@@ -28,6 +30,10 @@ static NSString * const kDriverLastNameKey = @"lastName";
 static NSString * const kDriverEmailKey = @"email";
 static NSString * const kDriverGroupKey = @"group";
 static NSString * const kDriverPhoneNumberKey = @"phoneNumber";
+
+static NSString * const kInsurancePeriodKey = @"insurancePeriod";
+
+
 
 #pragma mark - ZendriveConfiguration
 static NSString * const kConfigurationApplicationKey = @"applicationKey";
@@ -76,10 +82,60 @@ static NSString * const kDriverAttributesKey = @"driverAttributes";
     }];
 }
 
+- (void)goOnDuty:(CDVInvokedUrlCommand*)command{
+    [self.commandDelegate runInBackground:^{
+        @synchronized(self) {
+			trackingId = nil;
+           [ZendriveInsurance startDriveWithPeriod1:^(BOOL success, NSError * _Nullable error) {
+                 CDVPluginResult* pluginResult = nil;
+                 if(error == nil){
+					 NSLog(@"Insurance period 1 successfully called (goOnDuty).");
+                     pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
+                 }
+                 else {
+					 NSLog(@"Error encountered while starting period 1 (goOnDuty). Error is: %li", (long)error.code);
+                     pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR
+                                                      messageAsString:error.localizedFailureReason];
+                 }
+                 [self.commandDelegate sendPluginResult:pluginResult
+                                             callbackId:command.callbackId];
+            }];
+        }
+    }];
+}
+
+
+- (void)acceptPassengerRequest:(CDVInvokedUrlCommand*)command{
+    [self.commandDelegate runInBackground:^{
+        @synchronized(self) {
+			int randomNumber = abs(rand() * 10000);
+			trackingId = [NSString stringWithFormat:@"%i", randomNumber];
+            [ZendriveInsurance startDriveWithPeriod2:trackingId 
+				completionHandler:^(BOOL success, NSError * _Nullable error) {
+                 CDVPluginResult* pluginResult = nil;
+                 if(error == nil){
+					 NSLog(@"Insurance period 2 successfully called (acceptPassengerRequest).");
+                     pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
+                 }
+                 else {
+					 NSLog(@"Error encountered while starting period 2 (acceptPassengerRequest). Error is: %li", (long)error.code);
+                     pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR
+                                                      messageAsString:error.localizedFailureReason];
+                 }
+                 [self.commandDelegate sendPluginResult:pluginResult
+                                             callbackId:command.callbackId];
+            }];
+        }
+    }];
+}
+
 - (void)pickupPassenger:(CDVInvokedUrlCommand*)command{
     [self.commandDelegate runInBackground:^{
         @synchronized(self) {
-            NSString *trackingId = [command argumentAtIndex:0];			
+			if (trackingId == nil) {
+				int randomNumber = abs(rand() * 10000);
+				trackingId = [NSString stringWithFormat:@"%i", randomNumber];
+			}		
             [ZendriveInsurance startDriveWithPeriod3:trackingId
 				completionHandler:^(BOOL success, NSError * _Nullable error) {
                  CDVPluginResult* pluginResult = nil;
@@ -103,38 +159,15 @@ static NSString * const kDriverAttributesKey = @"driverAttributes";
 - (void)dropoffPassenger:(CDVInvokedUrlCommand*)command{
     [self.commandDelegate runInBackground:^{
         @synchronized(self) {
-            [ZendriveInsurance stopPeriod:^(BOOL success, NSError * _Nullable error) {
+			trackingId = nil;
+           [ZendriveInsurance startDriveWithPeriod1:^(BOOL success, NSError * _Nullable error) {
                  CDVPluginResult* pluginResult = nil;
                  if(error == nil){
-					 NSLog(@"Stop period successfully called (dropoffPassenger).");
+					 NSLog(@"Insurance period 1 successfully called (dropoffPassenger).");
                      pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
                  }
                  else {
-					 NSLog(@"Error encountered while stopping period (dropoffPassenger). Error is: %li", (long)error.code);
-                     pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR
-                                                      messageAsString:error.localizedFailureReason];
-                 }
-                 [self.commandDelegate sendPluginResult:pluginResult
-                                             callbackId:command.callbackId];
-            }];
-        }
-    }];
-}
-
-
-- (void)acceptPassengerRequest:(CDVInvokedUrlCommand*)command{
-    [self.commandDelegate runInBackground:^{
-        @synchronized(self) {
-            NSString *trackingId = [command argumentAtIndex:0];
-            [ZendriveInsurance startDriveWithPeriod2:trackingId 
-				completionHandler:^(BOOL success, NSError * _Nullable error) {
-                 CDVPluginResult* pluginResult = nil;
-                 if(error == nil){
-					 NSLog(@"Insurance period 2 successfully called (acceptPassengerRequest).");
-                     pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
-                 }
-                 else {
-					 NSLog(@"Error encountered while starting period 2 (acceptPassengerRequest). Error is: %li", (long)error.code);
+					 NSLog(@"Error encountered while starting period 1 (dropoffPassenger). Error is: %li", (long)error.code);
                      pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR
                                                       messageAsString:error.localizedFailureReason];
                  }
@@ -148,6 +181,7 @@ static NSString * const kDriverAttributesKey = @"driverAttributes";
 - (void)cancelPassengerRequest:(CDVInvokedUrlCommand*)command{
     [self.commandDelegate runInBackground:^{
         @synchronized(self) {
+			trackingId = nil;
             [ZendriveInsurance startDriveWithPeriod1:^(BOOL success, NSError * _Nullable error) {
                  CDVPluginResult* pluginResult = nil;
                  if(error == nil){
@@ -166,30 +200,10 @@ static NSString * const kDriverAttributesKey = @"driverAttributes";
     }];
 }
 
-- (void)goOnDuty:(CDVInvokedUrlCommand*)command{
-    [self.commandDelegate runInBackground:^{
-        @synchronized(self) {
-           [ZendriveInsurance startDriveWithPeriod1:^(BOOL success, NSError * _Nullable error) {
-                 CDVPluginResult* pluginResult = nil;
-                 if(error == nil){
-					 NSLog(@"Insurance period 1 successfully called (goOnDuty).");
-                     pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
-                 }
-                 else {
-					 NSLog(@"Error encountered while starting period 1 (goOnDuty). Error is: %li", (long)error.code);
-                     pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR
-                                                      messageAsString:error.localizedFailureReason];
-                 }
-                 [self.commandDelegate sendPluginResult:pluginResult
-                                             callbackId:command.callbackId];
-            }];
-        }
-    }];
-}
-
 - (void)goOffDuty:(CDVInvokedUrlCommand*)command{
     [self.commandDelegate runInBackground:^{
         @synchronized(self) {
+			trackingId = nil;
             [ZendriveInsurance stopPeriod:^(BOOL success, NSError * _Nullable error) {
                  CDVPluginResult* pluginResult = nil;
                  if(error == nil){
@@ -219,6 +233,9 @@ static NSString * const kDriverAttributesKey = @"driverAttributes";
                 activeDriveInfoDictionary[kTrackingIdKey] = [NSNull null];
                 if (activeDriveInfo.trackingId) {
                     activeDriveInfoDictionary[kTrackingIdKey] = activeDriveInfo.trackingId;
+                }
+                if (activeDriveInfo.insurancePeriod){
+                    activeDriveInfoDictionary[kInsurancePeriodKey] = @(activeDriveInfo.insurancePeriod);
                 }
                 activeDriveInfoDictionary[kSessionIdKey] = [NSNull null];
                 if (activeDriveInfo.sessionId) {
