@@ -3,6 +3,7 @@ package com.zendrive.phonegap;
 import android.Manifest;
 import android.Manifest.permission;
 import android.content.pm.PackageManager;
+import android.os.Build;
 import android.util.Log;
 
 import com.zendrive.sdk.Zendrive;
@@ -27,9 +28,6 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.Random;
 
-/**
- * Created by chandan on 11/3/14.
- */
 public class ZendriveCordovaPlugin extends CordovaPlugin {
     // ZendriveDriverAttributes dictionary keys
     private static final String kCustomAttributesKey = "customAttributes";
@@ -63,9 +61,6 @@ public class ZendriveCordovaPlugin extends CordovaPlugin {
         return OverrideContext == null ? this.cordova.getContext() : OverrideContext;
     }
 
-
-
-
     @Override
     protected synchronized void pluginInitialize() {
         super.pluginInitialize();
@@ -73,7 +68,13 @@ public class ZendriveCordovaPlugin extends CordovaPlugin {
             CORDOVA_INSTANCE = cordova;
         }
         ZendriveManager.init(getContext());
-        requestPermissions();
+    }
+
+    @Override
+    public void onStart() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            requestPermissions();
+        }
     }
 
     static CordovaInterface getCordovaInstance() {
