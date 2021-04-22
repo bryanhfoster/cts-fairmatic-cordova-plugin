@@ -415,6 +415,12 @@ Zendrive.ZendriveActiveDriveInfo = function () {
      * @type {String}
      */
     this.sessionId;
+	
+    /**
+     * Identifier that identifies this session uniquely.
+     * @type {String}
+     */
+    this.insurancePeriod;
 }
 
 /**
