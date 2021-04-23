@@ -3,11 +3,9 @@ package com.zendrive.phonegap;
 import android.content.Context;
 import android.util.Log;
 
-import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.zendrive.sdk.ZendriveSettingError;
-//import com.zendrive.sdk.*;
 import com.zendrive.sdk.AccidentInfo;
 import com.zendrive.sdk.AnalyzedDriveInfo;
 import com.zendrive.sdk.DriveResumeInfo;
