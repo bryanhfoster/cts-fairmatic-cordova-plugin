@@ -11,7 +11,6 @@ import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
 
 import org.apache.cordova.BuildConfig;
-import com.zendrive.R;
 import com.zendrive.sdk.ZendriveOperationResult;
 
 /**
