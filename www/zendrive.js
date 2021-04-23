@@ -417,7 +417,7 @@ Zendrive.ZendriveActiveDriveInfo = function () {
     this.sessionId;
 	
     /**
-     * Identifier that identifies this session uniquely.
+     * This shows which insurance period is active.
      * @type {String}
      */
     this.insurancePeriod;

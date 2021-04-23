@@ -54,8 +54,6 @@
         <source-file src="src/android/com/zendrive/phonegap/NotificationActivity.java" target-dir="src/com/zendrive/phonegap" />
         <source-file src="src/android/com/zendrive/phonegap/NotificationUtility.java" target-dir="src/com/zendrive/phonegap" />
         <source-file src="src/android/com/zendrive/phonegap/ZendriveManager.java" target-dir="src/com/zendrive/phonegap" />
-        <source-file src="src/android/com/zendrive/phonegap/TripManager.java" target-dir="src/com/zendrive/phonegap" />
-        <source-file src="src/android/com/zendrive/phonegap/SharedPrefsManager.java" target-dir="src/com/zendrive/phonegap" />
 
         <resource-file src="src/android/res/plugin-strings.xml" target="res/values/plugin-strings.xml" />
         <resource-file src="src/android/res/drawable-hdpi" target="res/drawable-hdpi" />
