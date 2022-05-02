@@ -11,7 +11,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/justincts1975/com-cts-fairmatic-cordova-plugin.git"
+    "url": "git+https://github.com/bryanhfoster/com-cts-fairmatic-cordova-plugin.git"
   },
   "keywords": [
     "ecosystem:cordova",
