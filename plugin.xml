@@ -45,7 +45,7 @@
         </config-file>
 
         <config-file target="AndroidManifest.xml" parent="/manifest/application">
-            <receiver android:name="com.zendrive.phonegap.ZendriveCordovaBroadcastReceiver" android:label="ZendriveCordovaBroadcastReceiver"></receiver>
+            <receiver android:exported="false" android:name="com.zendrive.phonegap.ZendriveCordovaBroadcastReceiver" android:label="ZendriveCordovaBroadcastReceiver"></receiver>
         </config-file>
 
         <source-file src="src/android/com/zendrive/phonegap/ZendriveCordovaPlugin.java" target-dir="src/com/zendrive/phonegap" />
