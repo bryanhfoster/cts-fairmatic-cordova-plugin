@@ -41,7 +41,7 @@
 			
 			<!-- This permission is needed for displaying the collision notification on Android Q and above.
 				See this for more info: https://developer.android.com/preview/behavior-changes-q#full-screen-intents -->
-			<uses-permission android:name="android.permission.USE_FULL_SCREEN_INTENT" />
+		
         </config-file>
 
         <config-file target="AndroidManifest.xml" parent="/manifest/application">
