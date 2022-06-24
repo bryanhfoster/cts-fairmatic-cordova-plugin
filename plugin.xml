@@ -45,11 +45,8 @@
         </config-file>
 
         <config-file target="AndroidManifest.xml" parent="/manifest/application">
-            <receiver android:exported="false" android:name="com.zendrive.phonegap.ZendriveCordovaBroadcastReceiver" android:label="ZendriveCordovaBroadcastReceiver">
-		<intent-filter>
-                <action android:name="com.android.action.SEND_SCAN_RESULT" >
-                    </action>
-            </intent-filter>
+            <receiver android:name="com.zendrive.phonegap.ZendriveCordovaBroadcastReceiver" android:label="ZendriveCordovaBroadcastReceiver">
+	
 		</receiver>
         </config-file>
 
